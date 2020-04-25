@@ -1,14 +1,31 @@
 import 'package:flutter/material.dart';
-import 'transacao_user.dart';
 
-class TransacaoForm extends StatelessWidget {
-
-  final tituloController = TextEditingController();
-  final valorController = TextEditingController();
+class TransacaoForm extends StatefulWidget {
 
   final void Function(String, double) onSubmit;
   
   TransacaoForm(this.onSubmit);
+
+  @override
+  _TransacaoFormState createState() => _TransacaoFormState();
+}
+
+class _TransacaoFormState extends State<TransacaoForm> {
+  final tituloController = TextEditingController();
+
+  final valorController = TextEditingController();
+
+  _submitForm(){    
+    final titulo = tituloController.text;
+    final valor = double.tryParse(valorController.text) ?? 0.0;
+
+    if(titulo.isEmpty || valor <=0){
+      return;
+    }
+
+    widget.onSubmit(titulo,valor); 
+       
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,12 +36,15 @@ class TransacaoForm extends StatelessWidget {
           child: Column(children: <Widget>[
             TextField(
               controller: tituloController,
+              onSubmitted: (_) => _submitForm(),
               decoration: InputDecoration(
                 labelText: 'Titulo',
               ),
             ),
             TextField(
               controller: valorController,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              onSubmitted: (_) => _submitForm(),
               decoration: InputDecoration(
                 labelText: 'Valor',
               ),
@@ -35,11 +55,7 @@ class TransacaoForm extends StatelessWidget {
                 FlatButton(                          
                   child: Text('Nova Transação'),
                   textColor: Colors.purple,
-                  onPressed: () {                    
-                    final titulo = tituloController.text;
-                    final valor = double.tryParse(valorController.text) ?? 0.0;
-                    onSubmit(titulo,valor);
-                  }, 
+                  onPressed: _submitForm, 
                 ),
               ],
             ),
