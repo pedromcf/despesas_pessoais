@@ -11,26 +11,26 @@ class TransacaoList extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    return Container(
-			height: MediaQuery.of(context).size.height * 0.55,      
-      	child: transacoes.isEmpty 
-          ? Column(
-            children: <Widget>[
-              SizedBox(height: 20),
-              Text(
-                'Nenhuma Transação adicionada!',
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              SizedBox(height: 20),
-              Container(
-                height: MediaQuery.of(context).size.height * 0.20, 
-                child: Image.asset('assets/images/waiting.png',
-                  fit: BoxFit.cover, 
+    return transacoes.isEmpty 
+          ? LayoutBuilder(builder: (ctx, constraints){
+            return Column(
+              children: <Widget>[
+                SizedBox(height: 20),
+                Text(
+                  'Nenhuma Transação adicionada!',
+                  style: Theme.of(context).textTheme.headline6,
                 ),
-              ),
-                       
-            ],
-          )
+                SizedBox(height: 20),
+                Container(
+                  height: constraints.maxHeight * 0.6,
+                  child: Image.asset('assets/images/waiting.png',
+                    fit: BoxFit.cover, 
+                  ),
+                ),
+                        
+              ],
+            );
+          })
           : ListView.builder(
               itemCount: transacoes.length,
               itemBuilder: (ctx, index) {
@@ -58,7 +58,14 @@ class TransacaoList extends StatelessWidget {
                   subtitle: Text(
                     DateFormat('d MMM y').format(tr.data),                  
                   ),
-                  trailing: IconButton(
+                  trailing: MediaQuery.of(context).size.width > 400 ?
+                    FlatButton.icon(
+                      icon: Icon(Icons.delete),
+                      label: Text('Excluir'),
+                      textColor: Theme.of(context).errorColor,
+                      onPressed: () => onRemove(tr.id),
+                    )
+                  : IconButton(
                     icon: Icon(Icons.delete),
                     color: Theme.of(context).errorColor,
                     onPressed: () => onRemove(tr.id),
@@ -66,7 +73,6 @@ class TransacaoList extends StatelessWidget {
                 ),
               );
             },
-        ),
-    );
+        );
   }
 }
